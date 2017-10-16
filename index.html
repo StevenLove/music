@@ -1,0 +1,118 @@
+<html>
+    <!-- external scripts -->
+    <script src="./node_modules/mathjs/dist/math.js"></script>
+    <!-- <script src="http://d3js.org/d3.v3.js"></script> -->
+    <script src="./js/d3.min.js"></script>
+
+    <!-- jquery -->
+    <!-- <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script> -->
+    <script src="./js/jquery.min.js"></script>
+    <!-- bootstrap js and css -->
+    <script src="./js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <link rel="stylesheet" href="./css/controls.css">
+    
+    
+    <!-- internal scripts -->
+    <script src="./constants.js"></script>
+    <!-- <script src="./ear.js"></script> -->
+    <!-- <script src="converter.js"></script> -->
+    <!-- <script src="scorer.js"></script> -->
+    <!-- <script src="otherInterpretationsOfNotes.js"></script> -->
+    <!-- <script src="timbreControls.js"></script> -->
+    <script src="spectrum.js"></script>
+    <script src="d3plotter.js"></script>
+    <script src="waveTables.js"></script>
+    <script src="drawnWave.js"></script>
+    <script src="drawableArray.js"></script>
+    <script src="distortion.js"></script>
+    <!-- <script src="./audioplayer.js"></script> -->
+    <script src="./musicplayer.js"></script>
+    <script src="bundle.js"></script>
+ 
+    <link rel="stylesheet" href="./style.css">
+
+
+
+    <body>
+        <h1> Synthesizer </h1>
+        <h3> Alternate contexts for notes </h3>
+        <p> Here you can type in scale degrees of notes in a progression to get a list of other ways to interpret those notes, along with a score of each interpretation's dissonance.
+        <br> This could help you see that a 2-5-7 is actually probably a 5-1-3!
+        <br> Valid notes are as follows: 1, b2, 2, b3, 3, 4, b5, 5, b6, 6, b7, 7.  Just type them with spaces between them </p>
+        <input id="scaleDegrees" type="text">
+        <button id="scaleDegreesButton">Submit</button>
+        <table id="otherInterpretations"><tbody></tbody></table>
+        <br>
+        <br>
+        <h3> Synthesizer Controls </h3>
+        <p> 
+            Notes are played by pressing keys in your home row: namely, <kbd>CapsLock</kbd>, <kbd>a</kbd>, <kbd>s</kbd>, <kbd>d</kbd>, <kbd>f</kbd>, <kbd>g</kbd>, <kbd>h</kbd>, <kbd>j</kbd>, <kbd>k</kbd>, <kbd>l</kbd>, <kbd>;</kbd>, <kbd>'</kbd>, and <kbd>Enter</kbd>
+        <br>The root of your scale can be modified by raising it with <kbd>b</kbd> or by lowering it with <kbd>v</kbd>
+        <br>The mode of your scale can be similarly modified with <kbd>m</kbd> and <kbd>n</kbd>
+        </p>
+
+        <label>Root:&nbsp;</label><span id="currentRoot"></span><span>&nbsp;(<input id="currentDetuning">)</span>
+        <br><label>Intervals:&nbsp;</label><input id="currentIntervals" type="text"><button id="currentIntervalsButton">Set Intervals</button>
+        <br><label>Mode:&nbsp;</label><span id="currentMode"></span>
+        <br><label>Scale:&nbsp;</label><span id="currentScale"></span>
+        <br>
+        <br>
+        <br>
+        <div id="currentNote"></div>
+        <div id="controls" style="width:400px; float:left">
+            <label> Volume: </label><input id="volume" type="range" max="100" min="0"/>
+            <label> Timbre: </label>
+            <select id="waveTableDropdown"></select>
+            <div id="harmonicAmplitudes">
+                <label>Amplitudes of Harmonic Series</label>
+                <div class="slider-wrapper">
+                    <label>1</label>
+                    <input type="range" min="0" max="100" value="80" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>2</label>
+                    <input type="range" min="0" max="100" value="65" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>3</label>
+                    <input type="range" min="0" max="100" value="50" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>4</label>
+                    <input type="range" min="0" max="100" value="35" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>5</label>
+                    <input type="range" min="0" max="100" value="20" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>6</label>
+                    <input type="range" min="0" max="100" value="15" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>7</label>
+                    <input type="range" min="0" max="100" value="10" step="1">
+                </div>
+                <div class="slider-wrapper">
+                    <label>8</label>
+                    <input type="range" min="0" max="100" value="5" step="1">
+                </div>
+            </div>
+            <div> &nbsp; </div><br>
+            <div id="distortion">
+                DISTORTION
+            </div>
+            <div id="formants">
+            </div>
+        </div>
+        <div id="displays" style="width:500px; float:left"></div>    
+        <div id="harmonic_series_graph" style="width:1200px; height: 450px;"></div>
+        <p> Now let's look at that same harmonic series, all wrapped into the same octave</p>
+        <div id="harmonic_series_one_octave" style="width:1200px;height:450px;"></div>
+        <input style="width:1200px" id="slider" type="range" max="1200" min="0"/>
+    </body>
+</html>
