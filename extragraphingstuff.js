@@ -8,9 +8,9 @@ const createBulge = () => {
     var bulge = spectrum();
     var halfwidth = 100;
     for(var i = -halfwidth; i < halfwidth; ++i){
-        var dist = (halfwidth-math.abs(i))/halfwidth;
+        var dist = (halfwidth-Math.abs(i))/halfwidth;
         var amt;
-            amt = math.pow(dist,4);
+            amt = Math.pow(dist,4);
             // amt = dist
         bulge.set(i,amt)
     }

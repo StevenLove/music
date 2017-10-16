@@ -57,7 +57,7 @@ const Scorer = (()=>{
         const secondTerm = -Math.exp(-b2*s*(fmax-fmin));
         const Z = 5*firstTerm + 5*secondTerm;
         /* Full formula */
-        const R = math.pow(X,0.1) * 0.5 * (math.pow(Y,3.11)) * Z;
+        const R = Math.pow(X,0.1) * 0.5 * (Math.pow(Y,3.11)) * Z;
         return R;
     }
 
@@ -71,7 +71,7 @@ const Scorer = (()=>{
         var roughness = 0;
         for(var i = 1; i < 6; ++i){
             for(var j = 1; j < 6; ++j){
-                roughness += sineRoughness(f1*i,f2*j,math.pow(0.88,i),math.pow(0.88,j));
+                roughness += sineRoughness(f1*i,f2*j,Math.pow(0.88,i),Math.pow(0.88,j));
             }
         }
         return roughness;

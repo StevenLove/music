@@ -26,10 +26,10 @@ const Converter = (()=>{
     }
 
     const centsToName = cents => {
-        var rounded = 100*math.round(cents/100);
+        var rounded = 100*z.round(cents/100);
         var name = SCALE_DEGREE_NAMES[rounded/100];
         var modifier = (cents >= rounded)? "+" : "-";
-        var diff = math.abs(cents-rounded).toFixed(0);
+        var diff = MATH.abs(cents-rounded).toFixed(0);
         return name+" ("+modifier+diff+")"
     }
     
@@ -38,13 +38,13 @@ const Converter = (()=>{
         if(fraction < 1 || fraction > 2){
             throw "fraction should be between 1 and 2";
         }
-        const val = math.log(fraction,2)*1200;
+        const val = Math.log2(fraction)*1200;
         // console.log("fraction",fraction,"goes to",val);
         return val;
     }
     const centsToFraction = cents => {
         // ratio=10.^((log10(2)/1200)*cents);
-        const val = math.pow(10,(math.log(2,10)/1200)*cents);
+        const val = Math.pow(10,(Math.log10(2)/1200)*cents);
         console.log("cents to fraction",cents,val);
         return val;
     }
@@ -55,16 +55,17 @@ const Converter = (()=>{
             return;
         }
         while(number >= 2){
-            number = math.divide(number,2);
+            number /= 2;
         }
         while(number < 1){
-            number = math.multiply(number,2);
+            number *= 2;
         }
         return number;
     }
 
+    const isInteger = n => n == Math.round(n);
     const harmonicSeriesToCentsAboveRoot = seriesNumber => {
-        if(!math.isInteger(seriesNumber) || seriesNumber < 1){
+        if(!isInteger(seriesNumber) || seriesNumber < 1){
             console.error("incorrect input to harmonic series to cents above root function");
             return;
         }

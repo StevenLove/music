@@ -64,7 +64,7 @@ const spectrum = (()=>{
         const and = spectrum => {
             var result = create();
             for(var i = 0; i < 1200; ++i){
-                result.set(i,math.min(ys[i],spectrum.get(i)));
+                result.set(i,Math.min(ys[i],spectrum.get(i)));
             }
             return result;
         }
