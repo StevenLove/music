@@ -1,6 +1,8 @@
-var Formants = require('./formants.js');
+const Formants = require('./formants.js');
+const WebAudio = require("./webaudio.js");
+const Visualizer = require("./visualizer.js");
 
-var AudioPlayer = (function(){
+const AudioPlayer = (function(){
     
     // Parameters
     const fullVolume = 0.5;
@@ -9,24 +11,24 @@ var AudioPlayer = (function(){
 
     var audioCtx;
     var gainNode;
-    var analyserNode;
-    var analyserBuffer;
 
     var noiseBuffer;
     var waveTables;
     var currentWaveTable;
 
     var biquads;
+    var formantSwitch;
+    var formantEnter;
+    var formantExit;
+    var formantSkip;
+    var formantsEnabled = false;
     var distortionCurve;
 
 
 
 
     const init = () => {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if(!audioCtx){
-            throw "AudioPlayer Error: your browser doesn't support web audio";
-        }
+        audioCtx = WebAudio.getContext();
         const sampleRate = audioCtx.sampleRate;
 
         // WHITE NOISE GENERATION
@@ -56,39 +58,60 @@ var AudioPlayer = (function(){
         biquads[0].frequency.value = 520;
         biquads[1].frequency.value = 1190;
         biquads[2].frequency.value = 2390;
-        
-        biquads[0].connect(biquads[1]);
-        biquads[1].connect(biquads[2]);
+
 
         const biquadGain = audioCtx.createGain();
+        formantEnter = audioCtx.createGain();
+        formantExit = audioCtx.createGain();
+        formantSwitch = audioCtx.createGain();
+        formantSkip = audioCtx.createGain();
 
+        formantEnter.connect(biquads[0]);
+        biquads[0].connect(biquads[1]);
+        biquads[1].connect(biquads[2]);
+        biquads[2].connect(formantExit);
+
+
+        const visualizer = Visualizer();
 
 
         // SOURCE NODES
         gainNode = audioCtx.createGain();
-        analyserNode = audioCtx.createAnalyser();
+        visualizerNode = visualizer.getNode();
 
         // DESTINATION
         const computerSpeakers = audioCtx.destination;
                 
         // SET NODE PROPERTIES
         gainNode.gain.value = defaultVolume;
-        analyserNode.fftSize = 256;
-        var bufferLength = analyserNode.frequencyBinCount;
-        console.log("analyser buffer length",bufferLength);
-        analyserBuffer = new Uint8Array(bufferLength);
-
 
 
         // CONNECT NODE
-        gainNode.connect(analyserNode);
-        analyserNode.connect(computerSpeakers);
-        biquads[2].connect(biquadGain);
-        biquadGain.gain.value = 1000;
-        biquadGain.connect(gainNode);
+        gainNode.connect(visualizerNode);
+        visualizerNode.connect(computerSpeakers);
+        formantSwitch.connect(formantSkip);
+        formantExit.connect(gainNode);
+        formantSkip.connect(gainNode);
+        formantExit.gain.value = 1000;
 
         // START
         unmute();
+    }
+
+    const enableFormants = () => {
+        if(formantsEnabled){
+            return;
+        }
+        formantSwitch.disconnect(formantSkip);
+        formantSwitch.connect(formantEnter);
+        formantsEnabled = true;
+    }
+    const disableFormants = () => {
+        if(formantsEnabled){
+            formantSwitch.disconnect(formantEnter);
+            formantSwitch.connect(formantSkip);
+            formantsEnabled = false;
+        }
     }
 
     const setVowel = v => {
@@ -126,12 +149,10 @@ var AudioPlayer = (function(){
         }
 
         /* formants */
-        // var white = createNoiseNode();
-        // white.connect(biquads[0]);
-        // white.start();
-        // white.stop(audioCtx.currentTime + 0.1);
-        g.connect(biquads[0]);
-        biquads[2].connect(gainNode);
+        // g.connect(biquads[0]);
+        // biquads[2].connect(gainNode);
+
+        g.connect(formantSwitch);
         // g.connect(gainNode);
         
         
@@ -218,10 +239,6 @@ var AudioPlayer = (function(){
         }
     }
 
-    const getByteFrequencyData = () => {
-        analyserNode.getByteFrequencyData(analyserBuffer);
-        return analyserBuffer;
-    }
 
     init();
     return({
@@ -236,7 +253,8 @@ var AudioPlayer = (function(){
         setAmplitude:setAmplitude,
         setVowel:setVowel,
         playBuffer:playBuffer,
-        getByteFrequencyData:getByteFrequencyData
+        enableFormants:enableFormants,
+        disableFormants:disableFormants
         
     })
     

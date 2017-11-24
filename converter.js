@@ -128,6 +128,17 @@ const Converter = (()=>{
         return index;
     }
 
+    // Untested
+    const simpleNoteNameToSemitonesFromC = simpleNoteName => {
+        const sharpNames = ['c','c#','d','d#','e','f','f#','g','g#','a','a#','b']
+        const flatNames =  ['c','db','d','eb','e','f','gb','g','ab','a','bb','b']
+        const sharpIndex = sharpNames.indexOf(simpleNoteName);
+        const flatIndex = flatNames.indexOf(simpleNoteName);
+        const index = Math.max(sharpIndex,flatIndex);
+        return index;
+    }
+    
+
     const incrementIntervalClass = semitones => {
         return (semitones + 1) % 12;
     }

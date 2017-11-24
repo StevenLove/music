@@ -41,7 +41,6 @@ const OtherInterpretationsOfNotes = (()=>{
         })
     }
     const setup = () => {
-        console.log("setup other interprs");
         const handleSubmission = () => {
             const input = $("#scaleDegrees").val();
             const names = input.split(/\s+/).filter(name=>name);

@@ -61,7 +61,7 @@ const Piano = (() => {
     const handleDownEvent = e => {
         const d = scaleDegreeFromKeyCode(e.keyCode);
         if(d || d == 0)
-        playScaleDegree2(d);
+        playScaleDegree(d);
     }
     const handleUpEvent = e => {
         const d = scaleDegreeFromKeyCode(e.keyCode);
@@ -86,29 +86,10 @@ const Piano = (() => {
         handleEvent(e);
     }
     
-    
-    const playScaleDegree = degree => {
-        /* prevent repeated playing of same note */
-        if(_heldDegrees[degree]){
-            return;
-        }
-        _heldDegrees[degree] = true;
-
-        const note = _scale.get(degree);        
-
-        if(_prevNotes.length >= NUM_NOTES_KEPT){
-            _prevNotes = _prevNotes.slice(1);
-        }
-        _prevNotes.push(note);
-        playNoteObservers.forEach(obs => obs(note));
-        const f = note.fq();
-        // console.log("playing note with frequency",f,"degree",degree,"scale",_scale);
-        // AudioPlayer.playAttack();
-        AudioPlayer.playNote({frequency:f},degree);
-    }
     const getDetunedRoot = () => {
         return _rootFrequency * Converter.centsToFraction(_detuning);
     }
+
     const getFrequencyOfDegree = degree => {
         const mod = Converter.myMod;
         const numNotesInScale = _intervals.length;
@@ -130,7 +111,7 @@ const Piano = (() => {
         return scale;
     }
 
-    const playScaleDegree2 = degree => {
+    const playScaleDegree = degree => {
         /* prevent repeated playing of same note */
         if(_heldDegrees[degree]){
             return;
@@ -237,25 +218,22 @@ const Piano = (() => {
     const setup = () => {
 
         const on = (char,f) => {
-            const charcode = char.charCodeAt(0);
-            const keycode = charcode - 97 + 65;
             $("body").keydown(e=>{
-                if(e.keyCode == keycode){
+                if(e.key == char){
                     f();
                 }
             })
         }
 
-        $("body").keydown(onKeyDownOrUp).keyup(onKeyDownOrUp);    
-        on('n',setMinor);
-        on('m',setMajor);
-        on('b',upHalfStep);
-        on('v',downHalfStep);
-        on('q',AudioPlayer.randomizeAmplitudes);
+        // $("body").keydown(onKeyDownOrUp).keyup(onKeyDownOrUp);    
+
     }
     
 
     return ({
+        playScaleDegree: playScaleDegree,
+        stopScaleDegree: stopScaleDegree,
+
         onKeyDownOrUp:onKeyDownOrUp,
         downHalfStep:downHalfStep,
         upHalfStep:upHalfStep,
